@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Post;
+use Session;
 
 class PostController extends Controller
 {
@@ -37,7 +39,20 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate form data
+        $this->validate($request, array(
+          'title' => 'required|max:255',
+          'body'  =>  'required'
+        ));
+        // Store in DB
+        $post         = new Post;
+        $post->title  = $request->title;
+        $post->body   = $request->body;
+        $post->save();
+        // Succss Flash message
+        Session::flash('success','Post has been added successfully!');
+        // Redirect
+        return redirect()->route('posts.show', $post->id);
     }
 
     /**
@@ -48,7 +63,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('posts.show');
     }
 
     /**
