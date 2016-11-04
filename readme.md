@@ -53,7 +53,7 @@ Route::get('contact', 'PagesController@getContact');
 
 ```php
 
-return view('pages.index');return
+return view('pages.index');
 
 return view('posts.index')->withPosts($posts);
 
