@@ -18,7 +18,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('id', 'desc')->paginate(5);
+        $posts = Post::orderBy('id', 'desc')->paginate(10);
         return view('posts.index')->withPosts($posts);
     }
 
@@ -48,12 +48,13 @@ class PostController extends Controller
         // Store in DB
         $post         = new Post;
         $post->title  = $request->title;
+        $post->slug   = str_slug($request->title);
         $post->body   = $request->body;
         $post->save();
         // Succss Flash message
         Session::flash('success','Post has been added successfully!');
         // Redirect
-        return redirect()->route('posts.show', $post->id);
+        return redirect()->route('posts.show', $post->slug);
     }
 
     /**
@@ -62,9 +63,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        $post = Post::find($id);
+        $post = Post::where('slug', '=', $slug)->first();
         return view('posts.show')->withPost($post);
     }
 
@@ -98,12 +99,13 @@ class PostController extends Controller
       
         $post = Post::find($id);
         $post->title = $request->title;
+        $post->slug   = str_slug($request->title);
         $post->body = $request->body;
         $post->save();
       
         Session::flash('success', 'Post updated successfully.');
       
-        return redirect()->route('posts.show', $post->id);
+        return redirect()->route('posts.show', $post->slug);
     }
 
     /**
@@ -112,9 +114,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
-        $post = Post::find($id);
+        $post = Post::where('slug', '=', $slug)->first();
         $post->delete();
       
         Session::flash('success', 'Post deleted successfully.');
